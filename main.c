@@ -1,12 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <usp10.h>
 
 int MAXIMO = 100000;
+
+int fifo(int qtd_frames);
 
 int main(int argc, char *argv[] ) {
     // Recebendo número de quadros
     int qtd_frames = atoi(argv[1]);
 
+    int fifo_page_faults = fifo(qtd_frames);
+    printf("%d\n", fifo_page_faults);
+}
+
+int fifo(int qtd_frames){
     // Criando a fila e o ponteiro para o último
     int *queue;
     queue = malloc(qtd_frames * sizeof(int));
@@ -41,6 +49,5 @@ int main(int argc, char *argv[] ) {
         }
     }
 
-    printf("%d\n", page_faults);
+    return(page_faults);
 }
-
