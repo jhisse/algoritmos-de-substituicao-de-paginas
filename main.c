@@ -18,7 +18,6 @@ int main(int argc, char *argv[] ) {
     int qtd_frames = atoi(argv[1]);
 
     node_t *linked_list;
-    linked_list = malloc(sizeof(node_t));
     linked_list = read_lines();
 
     int fifo_page_faults = fifo(qtd_frames, linked_list);
@@ -39,7 +38,7 @@ int fifo(int qtd_frames, node_t *linked_list){
 
     node_t *node = linked_list;
 
-    while (node->next != NULL) {
+    while (node != NULL) {
 
         // Verifica se a página está na memória
         int not_found = 1;
@@ -68,6 +67,9 @@ node_t *read_lines(){
         exit(1);
     }
 
+    head->val = -1;
+    head->next = NULL;
+
     node_t *current = head;
 
     int n = 0;
@@ -80,10 +82,8 @@ node_t *read_lines(){
 
         new->val = page;
         new->next = NULL;
-
         current->next = new;
         current = new;
-
         n++;
     }
 
