@@ -1,10 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <usp10.h>
 
 int MAXIMO = 100000;
 
+typedef struct node {
+    int val;
+    struct node * next;
+} node_t;
+
+node_t * read_lines();
 int fifo(int qtd_frames);
+int lru(int qtd_frames);
+int optimal(int qtd_frames);
 
 int main(int argc, char *argv[] ) {
     // Recebendo número de quadros
@@ -26,28 +33,61 @@ int fifo(int qtd_frames){
 
     int page_faults = 0;
 
-    int n = 0;
-    while (!feof(stdin) && (n <= MAXIMO)) {
-        n++;
+    node_t *linked_list;
+    linked_list = malloc(sizeof(node_t));
+    linked_list = read_lines();
 
-        int page = 0;
-        scanf("%d\n", &page);
+    node_t *node;
+    node = malloc(sizeof(node_t));
+    node = linked_list;
+
+    while (node->next != NULL) {
 
         // Verifica se a página está na memória
         int not_found = 1;
         for (int j = 0; j < qtd_frames; j++) {
-            if(queue[j] == page){
+            if(queue[j] == node->val){
                 not_found = 0;
             }
         }
 
         // Se página não esta na memória
         if(not_found) {
-            queue[last] = page;
+            queue[last] = node->val;
             last = (last + 1) % qtd_frames;
             page_faults++;
         }
+        node = node->next;
     }
 
     return(page_faults);
+}
+
+node_t *read_lines(){
+    node_t *head = NULL;
+    head = malloc(sizeof(node_t));
+    if (head == NULL) {
+        exit(1);
+    }
+
+    node_t *current = head;
+
+    int n = 0;
+    while (!feof(stdin) && (n <= MAXIMO)) {
+        node_t *new = NULL;
+        new = malloc(sizeof(node_t));
+
+        int page;
+        scanf("%d\n", &page);
+
+        new->val = page;
+        new->next = NULL;
+
+        current->next = new;
+        current = new;
+
+        n++;
+    }
+
+    return(head);
 }
