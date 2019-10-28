@@ -9,19 +9,23 @@ typedef struct node {
 } node_t;
 
 node_t * read_lines();
-int fifo(int qtd_frames);
-int lru(int qtd_frames);
-int optimal(int qtd_frames);
+int fifo(int qtd_frames, node_t *linked_list);
+int lru(int qtd_frames, node_t *linked_list);
+int optimal(int qtd_frames, node_t *linked_list);
 
 int main(int argc, char *argv[] ) {
     // Recebendo número de quadros
     int qtd_frames = atoi(argv[1]);
 
-    int fifo_page_faults = fifo(qtd_frames);
+    node_t *linked_list;
+    linked_list = malloc(sizeof(node_t));
+    linked_list = read_lines();
+
+    int fifo_page_faults = fifo(qtd_frames, linked_list);
     printf("%d\n", fifo_page_faults);
 }
 
-int fifo(int qtd_frames){
+int fifo(int qtd_frames, node_t *linked_list){
     // Criando a fila e o ponteiro para o último
     int *queue;
     queue = malloc(qtd_frames * sizeof(int));
@@ -33,13 +37,7 @@ int fifo(int qtd_frames){
 
     int page_faults = 0;
 
-    node_t *linked_list;
-    linked_list = malloc(sizeof(node_t));
-    linked_list = read_lines();
-
-    node_t *node;
-    node = malloc(sizeof(node_t));
-    node = linked_list;
+    node_t *node = linked_list;
 
     while (node->next != NULL) {
 
