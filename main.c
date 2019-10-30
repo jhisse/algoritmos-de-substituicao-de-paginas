@@ -21,7 +21,8 @@ int main(int argc, char *argv[] ) {
     linked_list = read_lines();
 
     int fifo_page_faults = fifo(qtd_frames, linked_list);
-    printf("%d\n", fifo_page_faults);
+    int lru_page_faults = lru(qtd_frames, linked_list);
+    printf("FIFO = %d, LRU = %d\n", fifo_page_faults, lru_page_faults);
 }
 
 int fifo(int qtd_frames, node_t *linked_list){
@@ -36,7 +37,7 @@ int fifo(int qtd_frames, node_t *linked_list){
 
     int page_faults = 0;
 
-    node_t *node = linked_list;
+    node_t *node = linked_list->next;
 
     while (node != NULL) {
 
@@ -54,6 +55,38 @@ int fifo(int qtd_frames, node_t *linked_list){
             last = (last + 1) % qtd_frames;
             page_faults++;
         }
+        node = node->next;
+    }
+
+    return(page_faults);
+}
+
+int lru(int qtd_frames, node_t *linked_list) {
+    int *cache;
+    cache = malloc(qtd_frames * sizeof(int));
+
+    for(int i = 0; i < qtd_frames; i++)
+        cache[i] = -1;
+
+    int page_faults = 0;
+
+    node_t *node = linked_list->next;
+
+    while (node != NULL) {
+        int atual = cache[0];
+        int proximo;
+        int em_cache = 0;
+        for(int i = 1; i <= qtd_frames; i++) {
+            if(atual == node->val) {
+                em_cache = 1;
+                break;
+            }
+            proximo = cache[i];
+            cache[i] = atual;
+            atual = proximo;
+        }
+        if (em_cache == 0) page_faults++;
+        cache[0] = node->val;
         node = node->next;
     }
 
